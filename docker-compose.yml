@@ -11,9 +11,7 @@ services:
     image: "postgres"
     ports:
       - '5123:5432'
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=news
+    env_file:
+      - .env
     volumes:
       - ./database-data:/var/lib/postgresql/data/
