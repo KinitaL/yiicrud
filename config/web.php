@@ -51,6 +51,14 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'api'],
+                'GET api/<id:\d+>' => 'api/view',
+                'POST api' => 'api/create',
+                'PUT api/<id:\d+>' => 'api/update',
+                'DELETE api/<id:\d+>' => 'api/delete',
+
+                'news/<id:\d+>' => 'news/view',
+                'news/update/<id:\d+>' => 'news/update',
+                'news/delete/<id:\d+>' => 'news/delete'
             ],
         ],
 
