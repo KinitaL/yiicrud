@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\News;
+use yii\filters\auth\HttpBasicAuth;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\ActiveController;
 use Yii;
@@ -25,6 +26,16 @@ class ApiController extends ActiveController
         $behaviors['authenticator']['class'] = HttpBearerAuth::className();
         return $behaviors;
     }*/
+
+
+    public function behaviors()
+    {
+        $behaviors = parent::behaviors();
+        $behaviors['authenticator'] = [
+            'class' => HttpBearerAuth::class,
+        ];
+        return $behaviors;
+    }
 
     public $modelClass = 'app\models\News';
 
