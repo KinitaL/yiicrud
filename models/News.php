@@ -8,7 +8,8 @@ class News extends \yii\db\ActiveRecord{
         return 'news';
     }
 
-    public function rules(){
+    public function rules()
+    {
         return [
             [['name','body'], 'required'],
             [['name'], 'string'],

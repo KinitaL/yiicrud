@@ -2,18 +2,24 @@
 
 namespace app\controllers;
 
-use app\models\News;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\web\HttpException;
+use app\components\NewsService;
+use yii\base\Exception;
+use Yii;
 
 class NewsController extends Controller{
 
     public function actionIndex()
     {
+        try {
+            $model = NewsService::find();
+        } catch (Exception $e){
+            Yii::$app->session->setFlash('error', "Неожиданная ошибка");
+            return $this->redirect('../');
+        }
         $dataProvider = new ActiveDataProvider([
-            'query' => News::find(),
+            'query' => $model,
 
             'pagination' => [
                 'pageSize' => 10
@@ -31,33 +37,29 @@ class NewsController extends Controller{
         ]);
     }
 
-    public function actionView($id)
+    public function actionView(int $id)
     {
         try {
-            $news = News::findOne($id);
-            if (!$news){
-                throw new NotFoundHttpException();
-            }
-        } catch (NotFoundHttpException $e){
+            $news = NewsService::findOne($id);
+        } catch (Exception $e){
+            Yii::$app->session->setFlash('error', "Такой новости не существует.");
             return $this->redirect('index');
         }
         return $this->render('view', [
-            'model' => News::findOne($id),
+            'model' => $news,
         ]);
     }
 
     public function actionCreate()
     {
-        $model = new News();
+        $model = NewsService::create();
 
         if ($this->request->isPost) {
             try {
-                if ($model->load($this->request->post()) && $model->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
-                } else {
-                    throw new HttpException(406);
-                }
-            } catch (HttpException $e){
+                $id = NewsService::loadAndSave($model);
+                return $this->redirect(['view', 'id' => $id]);
+            } catch (Exception $e){
+                Yii::$app->session->setFlash('error', "Ошибка при создании новости.");
                 return $this->redirect('../index');
             }
         } else {
@@ -72,22 +74,18 @@ class NewsController extends Controller{
     public function actionUpdate($id)
     {
         try{
-            $model = News::findOne($id);
-            if (!$model){
-                throw new NotFoundHttpException();
-            }
-
-        } catch (NotFoundHttpException $e){
+            $model = NewsService::findOne($id);         
+        } catch (Exception $e){
+            Yii::$app->session->setFlash('error', "Такой новости не существует.");
             return $this->redirect('../index');
         }
+
         if ($this->request->isPost) {
             try {
-                if ($model->load($this->request->post()) && $model->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
-                } else {
-                    throw new HttpException(406);
-                }
-            } catch (HttpException $e){
+                $id = NewsService::loadAndSave($model);
+                return $this->redirect(['view', 'id' => $id]);
+            } catch (Exception $e){
+                Yii::$app->session->setFlash('error', "Ошибка при обновлении новости.");
                 return $this->redirect('../index');
             }
         }
@@ -100,12 +98,9 @@ class NewsController extends Controller{
     public function actionDelete($id)
     {
         try{
-            $model = News::findOne($id);
-            if (!$model){
-                throw new NotFoundHttpException();
-            }
-
-        } catch (NotFoundHttpException $e){
+            $model = NewsService::findOne($id);
+        } catch (Exception $e){
+            Yii::$app->session->setFlash('error', "Ошибка при удалении новости.");
             return $this->redirect('../index');
         }
         $model->delete();
