@@ -8,8 +8,26 @@ use app\components\NewsService;
 use yii\base\Exception;
 use Yii;
 
+/*
+* NewsController is used as controller in mvc system.
+*
+* It manages routes with actions in order to give appropriate view and data
+* for each request.
+*
+*
+* Контроллер используется для обработке запросов по определнным путям.
+*
+* Каждому пути сопоставлен определенный метод, внутри которого будут получены необходимые
+* данные, которые будут отображены во view
+*
+ */
 class NewsController extends Controller{
 
+    /*
+     * Returns all data, that would be found in database.
+     *
+     * Метод возвращает все записи из БД и использует их для рендера view.
+     */
     public function actionIndex()
     {
         try {
@@ -37,6 +55,11 @@ class NewsController extends Controller{
         ]);
     }
 
+    /*
+     * Returns one entry by id
+     *
+     * Возвращает едиственную запись, которая содержит id, переданный в параметрах
+     */
     public function actionView(int $id)
     {
         try {
@@ -50,6 +73,15 @@ class NewsController extends Controller{
         ]);
     }
 
+    /*
+    * Method, that used in order to create new record in DB.
+    * Returns id of new record, that is used to render view with new record.
+    *
+    * Метод, используемый для создания новой записи в БД.
+    * Возвращает id новой записи, чтобы на его основе получить отображение с новой
+    * записью
+    * Также, если метод GET, то просто рендерит страницу с формой.
+    */
     public function actionCreate()
     {
         $model = NewsService::create();
@@ -71,6 +103,16 @@ class NewsController extends Controller{
         ]);
     }
 
+    /*
+     * Method which used in order to update record in DB. If request's method is POST,
+     * it takes one record from DB and update data there according data from user.
+     * If request's method is GET, it shows view with form, that contains data from record.
+     *
+     * Метод используется для обновления данных записи БД. Если он запрошен методом POST,
+     * тогда он просто обновляет данные в записи. Если GET, то отображает форму, в которой
+     * можно внести изменения в запись БД.
+     *
+     */
     public function actionUpdate($id)
     {
         try{
@@ -95,6 +137,12 @@ class NewsController extends Controller{
         ]);
     }
 
+    /*
+     * It deletes record in DB, that has id received from request.
+     * Then it shows index page.
+     *
+     * Удаляет запись из базы данных и возвращает начальную страницу.
+     */
     public function actionDelete($id)
     {
         try{
