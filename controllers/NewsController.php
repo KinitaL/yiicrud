@@ -5,6 +5,7 @@ namespace app\controllers;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use app\components\NewsService;
+use app\models\NewsSearch;
 use yii\base\Exception;
 use Yii;
 
@@ -36,22 +37,12 @@ class NewsController extends Controller{
             Yii::$app->session->setFlash('error', "Неожиданная ошибка");
             return $this->redirect('../');
         }
-        $dataProvider = new ActiveDataProvider([
-            'query' => $model,
-
-            'pagination' => [
-                'pageSize' => 10
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'rating' => SORT_DESC,
-                ]
-            ],
-
-        ]);
+        $searchModel = new NewsSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->get(), $model);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel
         ]);
     }
 
